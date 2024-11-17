@@ -64,18 +64,6 @@ log "Downloading from $DOWNLOAD_URL..."
 curl -L -o "$TARGET_FILE" "$DOWNLOAD_URL"
 chmod +x "$TARGET_FILE"
 
-# 提示用户输入验证文件内容
-read -p "请输入验证文件内容：" VALIDATION_CONTENT
-
-# 检查输入内容是否为空
-if [[ -z "$VALIDATION_CONTENT" ]]; then
-  error "验证文件内容不能为空，请重新运行脚本。"
-fi
-
-# 运行程序
-log "Running $TARGET_FILE with user-provided content..."
-./$TARGET_FILE -content "$VALIDATION_CONTENT" -port 80
-
-log "Cleaning up temporary files..."
-rm -f "$TARGET_FILE"
-log "Cleanup complete. Exiting."
+# 直接运行程序
+log "Running $TARGET_FILE..."
+./$TARGET_FILE -port 80
