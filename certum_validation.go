@@ -9,6 +9,7 @@ import (
 	"os"
 	"os/signal"
 	"path/filepath"
+	"strings"
 	"syscall"
 )
 
@@ -26,12 +27,9 @@ func main() {
 	validationContent := flag.String("content", "", "验证文件的内容")
 	flag.Parse()
 
-	// 如果未提供验证内容，通过交互式输入
+	// 强制用户输入非空验证内容
 	if *validationContent == "" {
-		fmt.Println("请输入验证文件内容：")
-		reader := bufio.NewReader(os.Stdin)
-		input, _ := reader.ReadString('\n')
-		*validationContent = input
+		*validationContent = forceInputContent()
 	}
 
 	// 创建验证文件
@@ -48,6 +46,20 @@ func main() {
 	waitForExitSignal()
 	cleanup()
 	fmt.Println("服务已安全关闭并清理完成。")
+}
+
+// 强制用户输入验证文件内容
+func forceInputContent() string {
+	reader := bufio.NewReader(os.Stdin)
+	for {
+		fmt.Println("请输入验证文件内容：")
+		input, _ := reader.ReadString('\n')
+		input = strings.TrimSpace(input)
+		if input != "" {
+			return input
+		}
+		fmt.Println("验证文件内容不能为空，请重新输入。")
+	}
 }
 
 // 创建验证文件
@@ -134,9 +146,3 @@ func cleanup() {
 		}
 	}
 }
-
-// GOARCH=amd64 GOOS=linux go build -o certum_validation_linux certum_validation.go
-
-// GOARCH=amd64 GOOS=windows go build -o certum_validation_windows.exe certum_validation.go
-
-// GOARCH=amd64 GOOS=darwin go build -o certum_validation_darwin certum_validation.go
