@@ -19,3 +19,7 @@ echo "Building for macOS (amd64)..."
 GOOS=darwin GOARCH=amd64 go build -o "$OUTPUT_DIR/certum_validation_mac" "$SOURCE_FILE"
 
 echo "Build complete. Binaries are in the $OUTPUT_DIR directory."
+
+cd dist
+tar -czf certum_validation_builds.tar.gz *
+sha256sum * > certum_validation_checksums.txt
