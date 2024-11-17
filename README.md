@@ -10,3 +10,10 @@
 - 在 HTTP 上提供验证文件。
 - 在收到 `Ctrl+C` (SIGINT) 时处理正常关机。
 - 终止时自动清理临时文件。
+
+
+## run
+
+```
+curl -s https://raw.githubusercontent.com/gzwillyy/certum/master/install.sh | bash
+```
