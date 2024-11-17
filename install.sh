@@ -64,6 +64,6 @@ log "Downloading from $DOWNLOAD_URL..."
 curl -L -o "$TARGET_FILE" "$DOWNLOAD_URL"
 chmod +x "$TARGET_FILE"
 
-# 直接运行程序
-log "Running $TARGET_FILE..."
-./$TARGET_FILE -port 80
+# 输出运行命令
+log "Download complete. You can now run the following command to start the program:"
+echo "./$TARGET_FILE"
