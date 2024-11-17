@@ -1,0 +1,124 @@
+2024/11/18 00:41:11 Starting TCP server on port 5123...
+2024/11/18 00:41:11 Server started on port 5123
+2024/11/18 00:41:15 Active connections: 1
+2024/11/18 00:41:15 Active connections: 2
+2024/11/18 00:41:15 New connection from 127.0.0.1:52532
+2024/11/18 00:41:15 New connection from 127.0.0.1:52531
+2024/11/18 00:41:15 HTML page sent to 127.0.0.1:52531
+2024/11/18 00:41:15 Connection closed. Active connections: 1
+2024/11/18 00:41:15 HTML page sent to 127.0.0.1:52532
+2024/11/18 00:41:15 Connection closed. Active connections: 0
+2024/11/18 00:41:17 Active connections: 1
+2024/11/18 00:41:17 Active connections: 2
+2024/11/18 00:41:17 New connection from 127.0.0.1:52550
+2024/11/18 00:41:17 New connection from 127.0.0.1:52549
+2024/11/18 00:41:17 HTML page sent to 127.0.0.1:52549
+2024/11/18 00:41:17 Connection closed. Active connections: 1
+2024/11/18 00:41:17 HTML page sent to 127.0.0.1:52550
+2024/11/18 00:41:17 Connection closed. Active connections: 0
+2024/11/18 00:41:20 Active connections: 1
+2024/11/18 00:41:20 Active connections: 2
+2024/11/18 00:41:20 New connection from 127.0.0.1:52568
+2024/11/18 00:41:20 New connection from 127.0.0.1:52567
+2024/11/18 00:41:20 HTML page sent to 127.0.0.1:52567
+2024/11/18 00:41:20 Connection closed. Active connections: 1
+2024/11/18 00:41:20 HTML page sent to 127.0.0.1:52568
+2024/11/18 00:41:20 Connection closed. Active connections: 0
+2024/11/18 00:41:21 Active connections: 1
+2024/11/18 00:41:21 Active connections: 2
+2024/11/18 00:41:21 New connection from 127.0.0.1:52582
+2024/11/18 00:41:21 New connection from 127.0.0.1:52581
+2024/11/18 00:41:21 HTML page sent to 127.0.0.1:52581
+2024/11/18 00:41:21 Connection closed. Active connections: 1
+2024/11/18 00:41:21 HTML page sent to 127.0.0.1:52582
+2024/11/18 00:41:21 Connection closed. Active connections: 0
+2024/11/18 00:41:21 Active connections: 1
+2024/11/18 00:41:21 Active connections: 2
+2024/11/18 00:41:21 New connection from 127.0.0.1:52586
+2024/11/18 00:41:21 New connection from 127.0.0.1:52585
+2024/11/18 00:41:21 HTML page sent to 127.0.0.1:52585
+2024/11/18 00:41:21 Connection closed. Active connections: 1
+2024/11/18 00:41:21 HTML page sent to 127.0.0.1:52586
+2024/11/18 00:41:21 Connection closed. Active connections: 0
+2024/11/18 00:41:21 Active connections: 1
+2024/11/18 00:41:21 Active connections: 2
+2024/11/18 00:41:21 New connection from 127.0.0.1:52600
+2024/11/18 00:41:21 New connection from 127.0.0.1:52599
+2024/11/18 00:41:21 HTML page sent to 127.0.0.1:52599
+2024/11/18 00:41:21 Connection closed. Active connections: 1
+2024/11/18 00:41:21 HTML page sent to 127.0.0.1:52600
+2024/11/18 00:41:21 Connection closed. Active connections: 0
+2024/11/18 00:41:21 Active connections: 1
+2024/11/18 00:41:21 Active connections: 2
+2024/11/18 00:41:21 New connection from 127.0.0.1:52601
+2024/11/18 00:41:21 New connection from 127.0.0.1:52602
+2024/11/18 00:41:21 HTML page sent to 127.0.0.1:52601
+2024/11/18 00:41:21 Connection closed. Active connections: 1
+2024/11/18 00:41:22 HTML page sent to 127.0.0.1:52602
+2024/11/18 00:41:22 Connection closed. Active connections: 0
+2024/11/18 00:41:22 Active connections: 1
+2024/11/18 00:41:22 Active connections: 2
+2024/11/18 00:41:22 New connection from 127.0.0.1:52603
+2024/11/18 00:41:22 New connection from 127.0.0.1:52604
+2024/11/18 00:41:22 HTML page sent to 127.0.0.1:52603
+2024/11/18 00:41:22 Connection closed. Active connections: 1
+2024/11/18 00:41:22 HTML page sent to 127.0.0.1:52604
+2024/11/18 00:41:22 Connection closed. Active connections: 0
+2024/11/18 00:41:22 Active connections: 1
+2024/11/18 00:41:22 Active connections: 2
+2024/11/18 00:41:22 New connection from 127.0.0.1:52606
+2024/11/18 00:41:22 New connection from 127.0.0.1:52605
+2024/11/18 00:41:22 HTML page sent to 127.0.0.1:52605
+2024/11/18 00:41:22 Connection closed. Active connections: 1
+2024/11/18 00:41:22 HTML page sent to 127.0.0.1:52606
+2024/11/18 00:41:22 Connection closed. Active connections: 0
+2024/11/18 00:41:22 Active connections: 1
+2024/11/18 00:41:22 New connection from 127.0.0.1:52607
+2024/11/18 00:41:22 Active connections: 2
+2024/11/18 00:41:22 New connection from 127.0.0.1:52608
+2024/11/18 00:41:22 HTML page sent to 127.0.0.1:52607
+2024/11/18 00:41:22 Connection closed. Active connections: 1
+2024/11/18 00:41:22 HTML page sent to 127.0.0.1:52608
+2024/11/18 00:41:22 Connection closed. Active connections: 0
+2024/11/18 00:41:22 Active connections: 1
+2024/11/18 00:41:22 Active connections: 2
+2024/11/18 00:41:22 New connection from 127.0.0.1:52616
+2024/11/18 00:41:22 New connection from 127.0.0.1:52615
+2024/11/18 00:41:22 HTML page sent to 127.0.0.1:52615
+2024/11/18 00:41:22 Connection closed. Active connections: 1
+2024/11/18 00:41:22 HTML page sent to 127.0.0.1:52616
+2024/11/18 00:41:22 Connection closed. Active connections: 0
+2024/11/18 00:41:23 Active connections: 1
+2024/11/18 00:41:23 Active connections: 2
+2024/11/18 00:41:23 New connection from 127.0.0.1:52622
+2024/11/18 00:41:23 New connection from 127.0.0.1:52621
+2024/11/18 00:41:23 HTML page sent to 127.0.0.1:52621
+2024/11/18 00:41:23 Connection closed. Active connections: 1
+2024/11/18 00:41:24 HTML page sent to 127.0.0.1:52622
+2024/11/18 00:41:24 Connection closed. Active connections: 0
+2024/11/18 00:41:24 Active connections: 1
+2024/11/18 00:41:24 New connection from 127.0.0.1:52629
+2024/11/18 00:41:24 Active connections: 2
+2024/11/18 00:41:24 New connection from 127.0.0.1:52630
+2024/11/18 00:41:24 HTML page sent to 127.0.0.1:52629
+2024/11/18 00:41:24 Connection closed. Active connections: 1
+2024/11/18 00:41:24 HTML page sent to 127.0.0.1:52630
+2024/11/18 00:41:24 Connection closed. Active connections: 0
+2024/11/18 00:41:26 Active connections: 1
+2024/11/18 00:41:26 New connection from 127.0.0.1:52639
+2024/11/18 00:41:26 Active connections: 2
+2024/11/18 00:41:26 New connection from 127.0.0.1:52640
+2024/11/18 00:41:26 HTML page sent to 127.0.0.1:52639
+2024/11/18 00:41:26 Connection closed. Active connections: 1
+2024/11/18 00:41:26 HTML page sent to 127.0.0.1:52640
+2024/11/18 00:41:26 Connection closed. Active connections: 0
+2024/11/18 00:41:27 Active connections: 1
+2024/11/18 00:41:27 Active connections: 2
+2024/11/18 00:41:27 New connection from 127.0.0.1:52656
+2024/11/18 00:41:27 New connection from 127.0.0.1:52655
+2024/11/18 00:41:27 HTML page sent to 127.0.0.1:52655
+2024/11/18 00:41:27 Connection closed. Active connections: 1
+2024/11/18 00:41:27 HTML page sent to 127.0.0.1:52656
+2024/11/18 00:41:27 Connection closed. Active connections: 0
+2024/11/18 00:41:34 Server shutting down...
+2024/11/18 00:41:34 Server is shutting down, stopping Accept loop.
