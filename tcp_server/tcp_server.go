@@ -1,58 +1,168 @@
 package main
 
 import (
-	"bufio"
+	"crypto/ecdsa"
+	"crypto/elliptic"
+	"crypto/rand"
+	"crypto/tls"
+	"crypto/x509"
+	"crypto/x509/pkix"
+	"encoding/pem"
+	"flag"
 	"fmt"
-	"io"
 	"log"
+	"math/big"
 	"net"
 	"os"
 	"os/signal"
-	"strconv"
 	"sync"
 	"syscall"
+	"time"
 )
 
 const (
-	logFilePath = "server.log"
+	certFile = "server.crt"
+	keyFile  = "server.key"
 )
 
 var (
-	server    net.Listener
-	logFile   *os.File
-	connCount int
-	shutdown  = make(chan struct{}) // 用于通知服务器关闭
-	wg        sync.WaitGroup        // 等待所有 goroutine 完成
+	wg       sync.WaitGroup
+	shutdown = make(chan struct{}) // 用于通知服务器关闭
 )
 
-// 初始化日志系统
-func initLogging() error {
-	var err error
-	logFile, err = os.OpenFile(logFilePath, os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0666)
+// 自动生成自签名证书
+func generateSelfSignedCert() error {
+	log.Println("Generating self-signed certificate...")
+	priv, err := ecdsa.GenerateKey(elliptic.P384(), rand.Reader)
 	if err != nil {
-		return fmt.Errorf("failed to open log file: %v", err)
+		return fmt.Errorf("failed to generate private key: %v", err)
 	}
-	multiWriter := io.MultiWriter(os.Stdout, logFile)
-	log.SetOutput(multiWriter)
+
+	template := x509.Certificate{
+		SerialNumber: big.NewInt(time.Now().UnixNano()),
+		Subject: pkix.Name{
+			Organization: []string{"Self-Signed"},
+			CommonName:   "localhost",
+		},
+		NotBefore:             time.Now(),
+		NotAfter:              time.Now().Add(365 * 24 * time.Hour),
+		KeyUsage:              x509.KeyUsageKeyEncipherment | x509.KeyUsageDigitalSignature,
+		ExtKeyUsage:           []x509.ExtKeyUsage{x509.ExtKeyUsageServerAuth},
+		BasicConstraintsValid: true,
+	}
+
+	certDER, err := x509.CreateCertificate(rand.Reader, &template, &template, &priv.PublicKey, priv)
+	if err != nil {
+		return fmt.Errorf("failed to create certificate: %v", err)
+	}
+
+	certOut, err := os.Create(certFile)
+	if err != nil {
+		return fmt.Errorf("failed to create cert file: %v", err)
+	}
+	defer certOut.Close()
+	if err := pem.Encode(certOut, &pem.Block{Type: "CERTIFICATE", Bytes: certDER}); err != nil {
+		return fmt.Errorf("failed to write certificate: %v", err)
+	}
+
+	keyOut, err := os.Create(keyFile)
+	if err != nil {
+		return fmt.Errorf("failed to create key file: %v", err)
+	}
+	defer keyOut.Close()
+	privBytes, err := x509.MarshalECPrivateKey(priv)
+	if err != nil {
+		return fmt.Errorf("failed to marshal private key: %v", err)
+	}
+	if err := pem.Encode(keyOut, &pem.Block{Type: "EC PRIVATE KEY", Bytes: privBytes}); err != nil {
+		return fmt.Errorf("failed to write private key: %v", err)
+	}
+
+	log.Println("Self-signed certificate generated successfully.")
 	return nil
 }
 
+// 检查文件是否存在
+func fileExists(path string) bool {
+	_, err := os.Stat(path)
+	return !os.IsNotExist(err)
+}
+
+// 启动明文 TCP 服务
+func startTCPServer(port int) {
+	listener, err := net.Listen("tcp", fmt.Sprintf(":%d", port))
+	if err != nil {
+		log.Fatalf("Error starting TCP server on port %d: %v", port, err)
+	}
+	defer listener.Close()
+	log.Printf("TCP server started on port %d", port)
+
+	for {
+		select {
+		case <-shutdown:
+			log.Println("TCP server shutting down...")
+			return
+		default:
+		}
+
+		conn, err := listener.Accept()
+		if err != nil {
+			log.Printf("Error accepting TCP connection: %v", err)
+			continue
+		}
+
+		wg.Add(1)
+		go func(conn net.Conn) {
+			defer wg.Done()
+			handleConnection(conn, "TCP")
+		}(conn)
+	}
+}
+
+// 启动加密的 TLS 服务
+func startTLSServer(port int) {
+	cert, err := tls.LoadX509KeyPair(certFile, keyFile)
+	if err != nil {
+		log.Fatalf("Error loading TLS certificate: %v", err)
+	}
+
+	tlsConfig := &tls.Config{Certificates: []tls.Certificate{cert}}
+	listener, err := tls.Listen("tcp", fmt.Sprintf(":%d", port), tlsConfig)
+	if err != nil {
+		log.Fatalf("Error starting TLS server on port %d: %v", port, err)
+	}
+	defer listener.Close()
+	log.Printf("TLS server started on port %d", port)
+
+	for {
+		select {
+		case <-shutdown:
+			log.Println("TLS server shutting down...")
+			return
+		default:
+		}
+
+		conn, err := listener.Accept()
+		if err != nil {
+			log.Printf("Error accepting TLS connection: %v", err)
+			continue
+		}
+
+		wg.Add(1)
+		go func(conn net.Conn) {
+			defer wg.Done()
+			handleConnection(conn, "TLS")
+		}(conn)
+	}
+}
+
 // 处理客户端连接
-func handleConnection(conn net.Conn) {
+func handleConnection(conn net.Conn, protocol string) {
 	defer conn.Close()
 
 	clientAddr := conn.RemoteAddr().String()
-	log.Printf("New connection from %s", clientAddr)
+	log.Printf("[%s] New connection from %s", protocol, clientAddr)
 
-	// 使用 bufio 读取客户端数据
-	reader := bufio.NewReader(conn)
-	_, err := reader.ReadString('\n') // 简单读取客户端请求
-	if err != nil {
-		log.Printf("Error reading from client %s: %v", clientAddr, err)
-		return
-	}
-
-	// 构造HTML响应
 	responseBody := `
 <!DOCTYPE html>
 <html>
@@ -60,8 +170,8 @@ func handleConnection(conn net.Conn) {
     <title>Test Page</title>
 </head>
 <body>
-    <h1>Welcome to TCP Server</h1>
-    <p>This is a simple HTML test page served by TCP server.</p>
+    <h1>Welcome to the %s server</h1>
+    <p>This is a simple HTML test page served by the %s server.</p>
 </body>
 </html>
 `
@@ -72,108 +182,46 @@ func handleConnection(conn net.Conn) {
 			"Connection: close\r\n\r\n"+
 			"%s",
 		len(responseBody),
-		responseBody,
+		fmt.Sprintf(responseBody, protocol, protocol),
 	)
 
-	// 发送响应到客户端
-	_, err = conn.Write([]byte(response))
+	_, err := conn.Write([]byte(response))
 	if err != nil {
-		log.Printf("Error sending response to client %s: %v", clientAddr, err)
+		log.Printf("[%s] Error sending response to client %s: %v", protocol, clientAddr, err)
 	}
-	log.Printf("HTML page sent to %s", clientAddr)
-}
-
-// 清理资源
-func cleanup() {
-	log.Println("Server shutting down...")
-
-	// 关闭服务器
-	if server != nil {
-		server.Close()
-		log.Println("Server socket closed.")
-	}
-
-	// 等待所有 goroutine 完成
-	wg.Wait()
-
-	// 删除日志文件
-	if logFile != nil {
-		logFile.Close()
-		os.Remove(logFilePath)
-		log.Println("Log file removed.")
-	}
-	log.Println("Cleanup complete.")
+	log.Printf("[%s] HTML page sent to %s", protocol, clientAddr)
 }
 
 func main() {
-	// 初始化日志系统
-	if err := initLogging(); err != nil {
-		fmt.Printf("Failed to initialize logging: %v\n", err)
-		os.Exit(1)
-	}
+	// 定义命令行参数
+	tcpPort := flag.Int("tcp-port", 25125, "Port for the TCP server")
+	tlsPort := flag.Int("tls-port", 25126, "Port for the TLS server")
+	flag.Parse()
 
-	// 手动输入端口
-	var port string
-	fmt.Print("Enter the port number to start the server: ")
-	_, err := fmt.Scanln(&port)
-	if err != nil {
-		log.Fatalf("Invalid input: %v", err)
-	}
-
-	// 验证端口号有效性
-	portInt, err := strconv.Atoi(port)
-	if err != nil || portInt <= 0 || portInt > 65535 {
-		log.Fatalf("Invalid port number. Please enter a number between 1 and 65535.")
+	// 检查证书是否存在，否则自动生成
+	if !fileExists(certFile) || !fileExists(keyFile) {
+		if err := generateSelfSignedCert(); err != nil {
+			log.Fatalf("Failed to generate self-signed certificate: %v", err)
+		}
 	}
 
 	// 捕获退出信号
 	signalChan := make(chan os.Signal, 1)
 	signal.Notify(signalChan, syscall.SIGINT, syscall.SIGTERM)
 
-	// 启动服务器
-	log.Printf("Starting TCP server on port %s...\n", port)
-	server, err = net.Listen("tcp", ":"+port)
-	if err != nil {
-		log.Fatalf("Error starting server: %v", err)
-	}
-	log.Printf("Server started on port %s", port)
+	// 启动 TCP 和 TLS 服务
+	go startTCPServer(*tcpPort)
+	go startTLSServer(*tlsPort)
 
-	// 在后台监听信号
-	go func() {
-		<-signalChan
-		close(shutdown)
-		cleanup()
-		os.Exit(0)
-	}()
-
-	// 主循环，接受连接
-	for {
-		conn, err := server.Accept()
-		select {
-		case <-shutdown:
-			log.Println("Server is shutting down, stopping Accept loop.")
-			return
-		default:
-		}
-
-		if err != nil {
-			if opErr, ok := err.(*net.OpError); ok && opErr.Err.Error() == "use of closed network connection" {
-				log.Println("Server socket closed, stopping Accept loop.")
-				return
-			}
-			log.Printf("Error accepting connection: %v", err)
-			continue
-		}
-
-		connCount++
-		log.Printf("Active connections: %d", connCount)
-
-		wg.Add(1) // 增加计数
-		go func() {
-			defer wg.Done() // 减少计数
-			handleConnection(conn)
-			connCount--
-			log.Printf("Connection closed. Active connections: %d", connCount)
-		}()
-	}
+	// 等待退出信号
+	<-signalChan
+	close(shutdown)
+	wg.Wait()
+	log.Println("Server gracefully shut down.")
 }
+
+// GOOS=linux GOARCH=amd64 go build -o tcp_server tcp_server.go
+// chmod +x ./tcp_server
+// nohup ./tcp_server --tcp-port 25125 --tls-port 25126 > server.log 2>&1 &
+// ps aux | grep tcp_server
+// kill 12345
