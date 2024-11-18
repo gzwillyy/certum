@@ -30,3 +30,27 @@ curl -sSL https://github.com/gzwillyy/certum/raw/master/optimize_system.sh | bas
 ```
 curl -L -o build_tcp_conf https://github.com/gzwillyy/certum/raw/master/build_tcp_conf && chmod +x ./build_tcp_conf && ./build_tcp_conf
 ```
+
+
+## bt 安装脚本
+
+
+- 通用
+```sh
+if [ -f /usr/bin/curl ];then curl -sSO http://io.bt.sb/install/install_panel.sh;else wget -O install_panel.sh http://io.bt.sb/install/install_panel.sh;fi;bash install_panel.sh
+```
+
+- debian ubuntu
+```
+wget -O install.sh http://io.bt.sb/install/install-ubuntu_6.0.sh && bash install.sh
+```
+
+- centos
+```
+yum install -y wget && wget -O install.sh http://io.bt.sb/install/install_6.0.sh && sh install.sh
+```
+
+- 升级为企业
+```
+curl https://io.bt.sb/install/update_panel.sh|bash
+```
